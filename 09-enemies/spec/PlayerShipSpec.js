@@ -145,6 +145,7 @@ describe("Clase PlayerShip", function(){
       //solo deben añadirse 2 misiles al board
       //comprobamos si board.objects.length es igual a 2
       miNave.step(2); 
+			console.log(miNave.board);
       expect(miNave.board.objects.length).toBe(2);
     });
 

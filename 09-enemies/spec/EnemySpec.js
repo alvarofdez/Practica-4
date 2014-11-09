@@ -61,3 +61,37 @@
 
 */
 
+describe("Clase EnemySpec", function(){
+	var canvas, ctx;
+
+  beforeEach(function(){
+		loadFixtures('index.html');
+		canvas = $('#game')[0];
+		expect(canvas).toExist();
+		ctx = canvas.getContext('2d');
+		expect(ctx).toBeDefined();
+		oldGame = Game;
+		SpriteSheet.load (sprites,function(){});
+  });
+
+  afterEach(function(){
+  	Game = oldGame;
+  });
+	
+	//Test step
+	it("step", function(){ 
+		var sprites = {
+		  enemy_purple: { sx: 37, sy: 0, w: 42, h: 43, frames: 1 }
+		};
+		var enemies = {
+    	basic: { x: 100, y: -50, sprite: 'enemy_purple', B: 100, C: 2 , E: 100 }
+		};
+		var e = new Enemy(enemies.basic, { x: 200 });
+		e.step (1);
+		expect (e.vx).toBe (e.A + e.B * Math.sin (e.C * e.t + e.D));
+		expect (e.vy).toBe (e.E + e.F * Math.sin (e.G * e.t + e.H));
+		expect (e.t).toBe (1);
+	});
+	
+});
+

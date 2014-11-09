@@ -124,38 +124,39 @@ var PlayerShip = function() {
     this.x = Game.width/2 - this.w / 2;
     this.y = Game.height - 10 - this.h;
     this.vx = 0;
-
     this.reloadTime = 0.25;  // Un cuarto de segundo para poder volver a disparar
     this.reload = this.reloadTime;
-
     this.maxVel = 200;
+		this.up = true;
 
     this.step = function(dt) {
-	if(Game.keys['left']) { this.vx = -this.maxVel; }
-	else if(Game.keys['right']) { this.vx = this.maxVel; }
-	else { this.vx = 0; }
+			if(Game.keys['left']) { this.vx = -this.maxVel; }
+			else if(Game.keys['right']) { this.vx = this.maxVel; }
+			else { this.vx = 0; }
 
-	this.x += this.vx * dt;
+			this.x += this.vx * dt;
 
-	if(this.x < 0) { this.x = 0; }
-	else if(this.x > Game.width - this.w) { 
-	    this.x = Game.width - this.w 
-	}
+			if(this.x < 0) { this.x = 0; }
+			else if(this.x > Game.width - this.w) { 
+	    	this.x = Game.width - this.w 
+			}
 
-	this.reload-=dt;
-	if(Game.keys['fire'] && this.reload < 0) {
-	    // Esta pulsada la tecla de disparo y ya ha pasado el tiempo reload
-	    Game.keys['fire'] = false;
-	    this.reload = this.reloadTime;
+			this.reload-=dt;
 
-	    // Se añaden al gameboard 2 misiles 
-	    this.board.add(new PlayerMissile(this.x,this.y+this.h/2));
-	    this.board.add(new PlayerMissile(this.x+this.w,this.y+this.h/2));
-	}
+			if(!Game.keys['fire']) {this.up = true}
+	    if(this.up && Game.keys['fire'] && this.reload < 0) {
+        // Esta pulsada la tecla de disparo y ya ha pasado el tiempo reload
+        //Game.keys['fire'] = false;
+        this.up = false;
+        this.reload = this.reloadTime;
+        // Se añaden al gameboard 2 misiles 
+        this.board.add(new PlayerMissile(this.x,this.y+this.h/2));
+        this.board.add(new PlayerMissile(this.x+this.w,this.y+this.h/2)); 
+	    }
     }
 
     this.draw = function(ctx) {
-	SpriteSheet.draw(ctx,'ship',this.x,this.y,0);
+			SpriteSheet.draw(ctx,'ship',this.x,this.y,0);
     }
 }
 
