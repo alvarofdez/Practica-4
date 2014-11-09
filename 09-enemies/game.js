@@ -4,7 +4,8 @@ var sprites = {
     enemy_purple: { sx: 37, sy: 0, w: 42, h: 43, frames: 1 },
     enemy_bee: { sx: 79, sy: 0, w: 37, h: 43, frames: 1 },
     enemy_ship: { sx: 116, sy: 0, w: 42, h: 43, frames: 1 },
-    enemy_circle: { sx: 158, sy: 0, w: 32, h: 33, frames: 1 }
+    enemy_circle: { sx: 158, sy: 0, w: 32, h: 33, frames: 1 },
+		fire_ball: { sx: 0, sy: 64, w: 64, h: 64, frames: 1 }
 };
 
 
@@ -127,7 +128,9 @@ var PlayerShip = function() {
     this.reloadTime = 0.25;  // Un cuarto de segundo para poder volver a disparar
     this.reload = this.reloadTime;
     this.maxVel = 200;
-		this.up = true;
+		this.upfire = true;
+		this.uplfireball = true;
+		this.uprfireball = false;
 
     this.step = function(dt) {
 			if(Game.keys['left']) { this.vx = -this.maxVel; }
@@ -143,15 +146,27 @@ var PlayerShip = function() {
 
 			this.reload-=dt;
 
-			if(!Game.keys['fire']) {this.up = true}
-	    if(this.up && Game.keys['fire'] && this.reload < 0) {
+			if(!Game.keys['fire']) {this.upfire = true}
+			if(!Game.keys['lfireball']) {this.uplfireball = true}
+			if(!Game.keys['rfireball']) {this.uprfireball = true}
+	    if(this.upfire && Game.keys['fire'] && this.reload < 0) {
         // Esta pulsada la tecla de disparo y ya ha pasado el tiempo reload
         //Game.keys['fire'] = false;
-        this.up = false;
+        this.upfire = false;
         this.reload = this.reloadTime;
         // Se añaden al gameboard 2 misiles 
         this.board.add(new PlayerMissile(this.x,this.y+this.h/2));
         this.board.add(new PlayerMissile(this.x+this.w,this.y+this.h/2)); 
+	    }
+			if(this.uplfireball && Game.keys['lfireball'] && this.reload < 0) {
+        this.uplfireball = false;
+        this.reload = this.reloadTime; 
+        this.board.add(new FireBall(this.x+this.w/2,this.y+this.h/2,-1));
+	    }
+			if(this.uprfireball && Game.keys['rfireball'] && this.reload < 0) {
+        this.uprfireball = false;
+        this.reload = this.reloadTime; 
+        this.board.add(new FireBall(this.x+this.w/2,this.y+this.h/2,1));
 	    }
     }
 
@@ -159,6 +174,27 @@ var PlayerShip = function() {
 			SpriteSheet.draw(ctx,'ship',this.x,this.y,0);
     }
 }
+
+
+var FireBall = function(x,y,d) {
+    this.w = SpriteSheet.map['fire_ball'].w;
+    this.h = SpriteSheet.map['fire_ball'].h;
+    this.x = x - this.w/2; 
+    this.y = y - this.h;
+		this.vy = -1050;
+		this.vx = 100 * d; 
+};
+
+FireBall.prototype.step = function(dt)  {
+	this.x += this.vx * dt;
+	this.y += this.vy * dt;
+	this.vy +=50;
+	if(this.y < -this.h) { this.board.remove(this); }
+};
+
+FireBall.prototype.draw = function(ctx)  {
+    SpriteSheet.draw(ctx,'fire_ball',this.x,this.y);
+};
 
 // Constructor los misiles.
 // Los metodos de esta clase los añadimos a su prototipo. De esta
@@ -168,7 +204,6 @@ var PlayerMissile = function(x,y) {
     this.w = SpriteSheet.map['missile'].w;
     this.h = SpriteSheet.map['missile'].h;
     this.x = x - this.w/2; 
-
     this.y = y - this.h; 
     this.vy = -700;
 };
