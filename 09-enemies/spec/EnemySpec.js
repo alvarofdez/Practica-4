@@ -92,6 +92,17 @@ describe("Clase EnemySpec", function(){
 		expect (e.vy).toBe (e.E + e.F * Math.sin (e.G * e.t + e.H));
 		expect (e.t).toBe (1);
 	});
+
+	//Test draw	
+	it("draw", function(){
+  	spyOn(SpriteSheet, "draw");
+		var missile = new PlayerMissile(10, 20);
+		missile.draw(ctx);
+		expect(SpriteSheet.draw).toHaveBeenCalled();
+	 	expect(SpriteSheet.draw.calls[0].args[1]).toEqual("missile");
+	 	expect(SpriteSheet.draw.calls[0].args[2]).toEqual(missile.x);
+	 	expect(SpriteSheet.draw.calls[0].args[3]).toEqual(missile.y);
+  });
 	
 });
 
