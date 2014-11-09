@@ -95,13 +95,19 @@ describe("Clase EnemySpec", function(){
 
 	//Test draw	
 	it("draw", function(){
-  	spyOn(SpriteSheet, "draw");
-		var missile = new PlayerMissile(10, 20);
-		missile.draw(ctx);
+		var sprites = {
+		  enemy_purple: { sx: 37, sy: 0, w: 42, h: 43, frames: 1 }
+		};
+		var enemies = {
+    	basic: { x: 100, y: -50, sprite: 'enemy_purple', B: 100, C: 2 , E: 100 }
+		};
+		var enemy = new Enemy(enemies.basic, { x: 200 });
+		spyOn(SpriteSheet, "draw");
+		enemy.draw(ctx);
 		expect(SpriteSheet.draw).toHaveBeenCalled();
-	 	expect(SpriteSheet.draw.calls[0].args[1]).toEqual("missile");
-	 	expect(SpriteSheet.draw.calls[0].args[2]).toEqual(missile.x);
-	 	expect(SpriteSheet.draw.calls[0].args[3]).toEqual(missile.y);
+	 	expect(SpriteSheet.draw.calls[0].args[1]).toEqual("enemy_purple");
+	 	expect(SpriteSheet.draw.calls[0].args[2]).toEqual(enemy.x);
+	 	expect(SpriteSheet.draw.calls[0].args[3]).toEqual(enemy.y);
   });
 	
 });
